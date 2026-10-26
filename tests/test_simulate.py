@@ -89,6 +89,18 @@ def test_self_loop_removal_is_simulable(tmp_path: Path):
     assert result.applied.rejected == ()
 
 
+def test_self_loop_add_is_simulable(tmp_path: Path):
+    # Mirror of removal: an add of {from: x, to: x} must land in applied, not
+    # rejected. Pins #567 against the old docstring that listed self-loops as
+    # rejected.
+    project = _make_pkg(tmp_path, {"a.py": ""})
+    g = _internal(project)
+    assert not g.has_edge("app.a", "app.a")
+    result = find_simulate(g, add=[("app.a", "app.a")], remove=[], project_root=project)
+    assert [(e.source, e.target) for e in result.applied.added_edges] == [("app.a", "app.a")]
+    assert result.applied.rejected == ()
+
+
 def test_duplicate_remove_does_not_crash(tmp_path: Path):
     # Regression: a repeated remove used to call remove_edge twice and raise.
     project = _make_pkg(tmp_path, {"a.py": "from app.b import x\n", "b.py": ""})

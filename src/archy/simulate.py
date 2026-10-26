@@ -192,10 +192,9 @@ def _resolve_delta(
 ) -> AppliedDelta:
     """Resolve raw endpoint strings to graph nodes and classify each spec.
 
-    An edge whose endpoint matches no internal module is `unresolved`; a
-    self-loop is `rejected`; an `add` of an existing edge or a `remove` of a
-    missing edge is a no-op. Only genuinely applicable specs land in
-    `added_edges` / `removed_edges`.
+    An edge whose endpoint matches no internal module is `unresolved`; an
+    `add` of an existing edge or a `remove` of a missing edge is a no-op.
+    Only genuinely applicable specs land in `added_edges` / `removed_edges`.
 
     Resolved pairs and unresolved endpoint names are both de-duplicated
     (order-preserving), and a pair that appears in both `add` and `remove`
@@ -203,9 +202,9 @@ def _resolve_delta(
     `AppliedDelta` consistent with the sequential apply and, critically, stops a
     repeated `remove` from calling `remove_edge` twice (which would raise).
 
-    Self-loops are NOT rejected: archy's resolver does produce module-imports-
+    Self-loops are not rejected: archy's resolver does produce module-imports-
     itself edges (e.g. `from . import box as box` in rich's box.py), so a
-    self-edge can genuinely exist and removing it must be simulable.
+    self-edge can genuinely exist; adding or removing one must be simulable.
     """
 
     def _resolve_one(ref: str) -> str | None:
